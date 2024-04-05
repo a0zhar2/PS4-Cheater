@@ -1,17 +1,15 @@
-﻿namespace PS4_Cheater
-{
+﻿namespace PS4_Cheater {
+
     using System;
     using System.Windows.Forms;
 
-    internal static class Program
-    {
+    internal static class Program {
+
         [STAThread]
-        private static void Main()
-        {
+        private static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new main());
         }
     }
 }
-

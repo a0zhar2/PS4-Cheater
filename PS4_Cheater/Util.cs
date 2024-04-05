@@ -1,75 +1,69 @@
-﻿using Be.Windows.Forms;
-using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Windows.Forms;
-using System.Configuration;
-using libdebug;
+﻿using libdebug;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Windows.Forms;
 
-namespace PS4_Cheater
-{
+namespace PS4_Cheater {
 
-    class GameInfo
-    {
-        const string GAME_INFO_7_02_PROCESS_NAME = "SceCdlgApp";
-        const string GAME_INFO_7_02_SECTION_NAME = "libSceCdlgUtilServer.sprx";
-        const int GAME_INFO_7_02_SECTION_PROT = 3;
-        const int GAME_INFO_7_02_ID_OFFSET = 0XA0;
-        const int GAME_INFO_7_02_VERSION_OFFSET = 0XC8;
+    internal class GameInfo {
+        private const string GAME_INFO_7_02_PROCESS_NAME = "SceCdlgApp";
+        private const string GAME_INFO_7_02_SECTION_NAME = "libSceCdlgUtilServer.sprx";
+        private const int GAME_INFO_7_02_SECTION_PROT = 3;
+        private const int GAME_INFO_7_02_ID_OFFSET = 0XA0;
+        private const int GAME_INFO_7_02_VERSION_OFFSET = 0XC8;
 
-        const string GAME_INFO_6_72_PROCESS_NAME = "SceCdlgApp";
-        const string GAME_INFO_6_72_SECTION_NAME = "libSceCdlgUtilServer.sprx";
-        const int GAME_INFO_6_72_SECTION_PROT = 3;
-        const int GAME_INFO_6_72_ID_OFFSET = 0XA0;
-        const int GAME_INFO_6_72_VERSION_OFFSET = 0XC8;
+        private const string GAME_INFO_6_72_PROCESS_NAME = "SceCdlgApp";
+        private const string GAME_INFO_6_72_SECTION_NAME = "libSceCdlgUtilServer.sprx";
+        private const int GAME_INFO_6_72_SECTION_PROT = 3;
+        private const int GAME_INFO_6_72_ID_OFFSET = 0XA0;
+        private const int GAME_INFO_6_72_VERSION_OFFSET = 0XC8;
 
-		const string GAME_INFO_5_05_PROCESS_NAME = "SceCdlgApp";
-        const string GAME_INFO_5_05_SECTION_NAME = "libSceCdlgUtilServer.sprx";
-        const int GAME_INFO_5_05_SECTION_PROT = 3;
-        const int GAME_INFO_5_05_ID_OFFSET = 0XA0;
-        const int GAME_INFO_5_05_VERSION_OFFSET = 0XC8;
-		
+        private const string GAME_INFO_5_05_PROCESS_NAME = "SceCdlgApp";
+        private const string GAME_INFO_5_05_SECTION_NAME = "libSceCdlgUtilServer.sprx";
+        private const int GAME_INFO_5_05_SECTION_PROT = 3;
+        private const int GAME_INFO_5_05_ID_OFFSET = 0XA0;
+        private const int GAME_INFO_5_05_VERSION_OFFSET = 0XC8;
+
         public string GameID = "";
         public string Version = "";
 
-        public GameInfo()
-        {
+        public GameInfo() {
             string process_name = "";
             string section_name = "";
             ulong id_offset = 0;
             ulong version_offset = 0;
             int section_prot = 0;
 
-            switch (Util.Version)
-            {
+            switch (Util.Version) {
                 case 702:
-                    process_name = GAME_INFO_7_02_PROCESS_NAME;
-                    section_name = GAME_INFO_7_02_SECTION_NAME;
-                    id_offset = GAME_INFO_7_02_ID_OFFSET;
-                    version_offset = GAME_INFO_7_02_VERSION_OFFSET;
-                    section_prot = GAME_INFO_7_02_SECTION_PROT;
-                    break;
+                process_name = GAME_INFO_7_02_PROCESS_NAME;
+                section_name = GAME_INFO_7_02_SECTION_NAME;
+                id_offset = GAME_INFO_7_02_ID_OFFSET;
+                version_offset = GAME_INFO_7_02_VERSION_OFFSET;
+                section_prot = GAME_INFO_7_02_SECTION_PROT;
+                break;
+
                 case 672:
-                    process_name = GAME_INFO_6_72_PROCESS_NAME;
-                    section_name = GAME_INFO_6_72_SECTION_NAME;
-                    id_offset = GAME_INFO_6_72_ID_OFFSET;
-                    version_offset = GAME_INFO_6_72_VERSION_OFFSET;
-                    section_prot = GAME_INFO_6_72_SECTION_PROT;
-                    break;
-				case 505:
-                    process_name = GAME_INFO_5_05_PROCESS_NAME;
-                    section_name = GAME_INFO_5_05_SECTION_NAME;
-                    id_offset = GAME_INFO_5_05_ID_OFFSET;
-                    version_offset = GAME_INFO_5_05_VERSION_OFFSET;
-                    section_prot = GAME_INFO_5_05_SECTION_PROT;
-                    break;
+                process_name = GAME_INFO_6_72_PROCESS_NAME;
+                section_name = GAME_INFO_6_72_SECTION_NAME;
+                id_offset = GAME_INFO_6_72_ID_OFFSET;
+                version_offset = GAME_INFO_6_72_VERSION_OFFSET;
+                section_prot = GAME_INFO_6_72_SECTION_PROT;
+                break;
+
+                case 505:
+                process_name = GAME_INFO_5_05_PROCESS_NAME;
+                section_name = GAME_INFO_5_05_SECTION_NAME;
+                id_offset = GAME_INFO_5_05_ID_OFFSET;
+                version_offset = GAME_INFO_5_05_VERSION_OFFSET;
+                section_prot = GAME_INFO_5_05_SECTION_PROT;
+                break;
+
                 default:
-                    break;
+                break;
             }
 
-            try
-            {
+            try {
                 ProcessManager processManager = new ProcessManager();
                 ProcessInfo? maybeProcessInfo = processManager.GetProcessInfo(process_name);
                 if (maybeProcessInfo is null)
@@ -92,16 +86,12 @@ namespace PS4_Cheater
                 GameID = GameID.Trim(new char[] { '\0' });
                 Version = System.Text.Encoding.Default.GetString(memoryHelper.ReadMemory(sectionList[0].Start + version_offset, 16));
                 Version = Version.Trim(new char[] { '\0' });
-            }
-            catch
-            {
-
+            } catch {
             }
         }
     }
 
-    class CONSTANT
-    {
+    internal class CONSTANT {
         public const uint SAVE_FLAG_NONE = 0x0;
         public const uint SAVE_FLAG_LOCK = 0x1;
         public const uint SAVE_FLAG_MODIFED = 0x2;
@@ -158,57 +148,43 @@ namespace PS4_Cheater
         public const int PEEK_BUFFER_LENGTH = 32 * 1024 * 1024;
     }
 
-    public class Util
-    {
+    public class Util {
         public static int DefaultProcessID = 0;
         public static int SceProcessID = 0;
         public static int Version = 0;
     }
-       
-    class Config
-    {
+
+    internal class Config {
         public static string fileName = System.IO.Path.GetFileName(Application.ExecutablePath);
-        public static bool addSetting(string key, string value)
-        {
-            try
-            {
+
+        public static bool addSetting(string key, string value) {
+            try {
                 Configuration config = ConfigurationManager.OpenExeConfiguration(fileName);
                 config.AppSettings.Settings.Add(key, value);
                 config.Save();
                 return true;
-            }
-            catch
-            {
-
+            } catch {
             }
             return false;
         }
 
-        public static string getSetting(string key)
-        {
-            try
-            {
+        public static string getSetting(string key) {
+            try {
                 Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(fileName);
                 string value = config.AppSettings.Settings[key].Value;
                 return value;
-            }
-            catch
-            {
-
+            } catch {
             }
             return "";
         }
-        public static bool updateSetting(string key, string newValue)
-        {
-            try
-            {
+
+        public static bool updateSetting(string key, string newValue) {
+            try {
                 Configuration config = System.Configuration.ConfigurationManager.OpenExeConfiguration(fileName);
                 string value = config.AppSettings.Settings[key].Value = newValue;
                 config.Save();
                 return true;
-            }
-            catch
-            {
+            } catch {
                 addSetting(key, newValue);
             }
             return false;

@@ -1,14 +1,12 @@
 ﻿using Be.Windows.Forms;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Collections;
-using System.Collections.Generic;
 
-namespace PS4_Cheater
-{
-    public class MemoryViewByteProvider : IByteProvider
-    {
+namespace PS4_Cheater {
+
+    public class MemoryViewByteProvider : IByteProvider {
         private bool _hasChanges;
         private ByteCollection _bytes;
         public List<int> change_list { get; set; }
@@ -19,47 +17,36 @@ namespace PS4_Cheater
         [field: CompilerGenerated, DebuggerBrowsable(0)]
         public event EventHandler LengthChanged;
 
-        public MemoryViewByteProvider(byte[] data) : this(new ByteCollection(data))
-        {
+        public MemoryViewByteProvider(byte[] data) : this(new ByteCollection(data)) {
             change_list = new List<int>();
         }
 
-        public MemoryViewByteProvider(ByteCollection bytes)
-        {
+        public MemoryViewByteProvider(ByteCollection bytes) {
             this._bytes = bytes;
         }
 
-        public void ApplyChanges()
-        {
+        public void ApplyChanges() {
             this._hasChanges = false;
         }
 
-        public void DeleteBytes(long index, long length)
-        {
-
+        public void DeleteBytes(long index, long length) {
         }
 
         public bool HasChanges() =>
             this._hasChanges;
 
-        public void InsertBytes(long index, byte[] bs)
-        {
-
+        public void InsertBytes(long index, byte[] bs) {
         }
 
-        private void OnChanged(EventArgs e)
-        {
+        private void OnChanged(EventArgs e) {
             this._hasChanges = true;
-            if (this.Changed != null)
-            {
+            if (this.Changed != null) {
                 this.Changed(this, e);
             }
         }
 
-        private void OnLengthChanged(EventArgs e)
-        {
-            if (this.LengthChanged != null)
-            {
+        private void OnLengthChanged(EventArgs e) {
+            if (this.LengthChanged != null) {
                 this.LengthChanged(this, e);
             }
         }
@@ -76,8 +63,7 @@ namespace PS4_Cheater
         public bool SupportsWriteByte() =>
             true;
 
-        public void WriteByte(long index, byte value)
-        {
+        public void WriteByte(long index, byte value) {
             this._bytes[(int)index] = value;
             this.change_list.Add((int)index);
             this.OnChanged(EventArgs.Empty);

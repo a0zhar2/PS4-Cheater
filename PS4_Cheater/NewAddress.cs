@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace PS4_Cheater
-{
-    public partial class NewAddress : Form
-    {
+namespace PS4_Cheater {
+
+    public partial class NewAddress : Form {
         private Button add_offset_btn = new Button();
         private Button del_offset_btn = new Button();
 
@@ -21,8 +16,7 @@ namespace PS4_Cheater
 
         private ProcessManager ProcessManager = null;
 
-        public NewAddress(ProcessManager ProcessManager)
-        {
+        public NewAddress(ProcessManager ProcessManager) {
             InitializeComponent();
 
             this.MemoryHelper = new MemoryHelper(true, 0);
@@ -38,23 +32,17 @@ namespace PS4_Cheater
 
         public List<long> OffsetList = new List<long>();
 
-        private void save_btn_Click(object sender, EventArgs e)
-        {
-            try
-            {
+        private void save_btn_Click(object sender, EventArgs e) {
+            try {
                 string value = value_box.Text;
                 string type = type_box.Text;
                 string description = description_box.Text;
 
-                if (!Pointer)
-                {
+                if (!Pointer) {
                     this.Address = ulong.Parse(address_box.Text, System.Globalization.NumberStyles.HexNumber);
-                }
-                else
-                {
+                } else {
                     this.Address = ulong.Parse(offset_box_list[0].Text, System.Globalization.NumberStyles.HexNumber);
-                    for (int i = 1; i < offset_box_list.Count; ++i)
-                    {
+                    for (int i = 1; i < offset_box_list.Count; ++i) {
                         OffsetList.Add(long.Parse(offset_box_list[i].Text, System.Globalization.NumberStyles.HexNumber));
                     }
                 }
@@ -65,23 +53,18 @@ namespace PS4_Cheater
                 this.Lock = lock_box.Checked;
 
                 this.Close();
-            }
-            catch (Exception exception)
-            {
+            } catch (Exception exception) {
                 MessageBox.Show(exception.Message);
             }
         }
 
-        private void NewAddress_Load(object sender, EventArgs e)
-        {
+        private void NewAddress_Load(object sender, EventArgs e) {
             type_box.Items.AddRange(CONSTANT.SEARCH_VALUE_TYPE);
             type_box.SelectedIndex = 2;
         }
 
-        private void pointer_box_CheckedChanged(object sender, EventArgs e)
-        {
-            if (pointer_box.Checked)
-            {
+        private void pointer_box_CheckedChanged(object sender, EventArgs e) {
+            if (pointer_box.Checked) {
                 Pointer = true;
                 Point save_position = save_btn.Location;
                 save_position.Y = 140;
@@ -106,9 +89,7 @@ namespace PS4_Cheater
 
                 address_box.Enabled = false;
                 this.Height = 170;
-            }
-            else
-            {
+            } else {
                 Pointer = false;
 
                 Point save_position = save_btn.Location;
@@ -123,8 +104,7 @@ namespace PS4_Cheater
                 this.Controls.Remove(del_offset_btn);
                 this.Controls.Remove(add_offset_btn);
 
-                for (int i = 0; i < offset_box_list.Count; ++i)
-                {
+                for (int i = 0; i < offset_box_list.Count; ++i) {
                     this.Controls.Remove(offset_box_list[i]);
                     this.Controls.Remove(offset_label_list[i]);
                 }
@@ -138,9 +118,9 @@ namespace PS4_Cheater
             }
         }
 
-        private void DelOffset_Click(object sender, EventArgs e)
-        {
-            if (offset_label_list.Count == 0) return;
+        private void DelOffset_Click(object sender, EventArgs e) {
+            if (offset_label_list.Count == 0)
+                return;
 
             TextBox textBox = offset_box_list[offset_label_list.Count - 1];
             this.Controls.Remove(textBox);
@@ -169,8 +149,7 @@ namespace PS4_Cheater
             this.Height -= 30;
         }
 
-        private void AddOffset_Click(object sender, EventArgs e)
-        {
+        private void AddOffset_Click(object sender, EventArgs e) {
             TextBox textBox = new TextBox();
             textBox.Text = "0";
             textBox.Size = add_offset_btn.Size;
@@ -204,62 +183,51 @@ namespace PS4_Cheater
             this.Height += 30;
         }
 
-        private void PointerCheckerPointer_Tick(object sender, EventArgs e)
-        {
+        private void PointerCheckerPointer_Tick(object sender, EventArgs e) {
             if (!Pointer)
                 return;
 
-            try
-            {
+            try {
                 ValueType valueType = MemoryHelper.GetValueTypeByString(type_box.Text);
 
                 long base_address = 0;
-                for (int i = 0; i < offset_box_list.Count; ++i)
-                {
+                for (int i = 0; i < offset_box_list.Count; ++i) {
                     long address = long.Parse(offset_box_list[i].Text, System.Globalization.NumberStyles.HexNumber);
 
-                    if (i != offset_box_list.Count - 1)
-                    {
+                    if (i != offset_box_list.Count - 1) {
                         byte[] next_address = MemoryHelper.ReadMemory((ulong)(address + base_address), 8);
                         base_address = BitConverter.ToInt64(next_address, 0);
                         offset_label_list[i].Text = base_address.ToString("X");
-                    }
-                    else
-                    {
+                    } else {
                         MemoryHelper.InitMemoryHandler(valueType, CompareType.NONE, true);
                         byte[] data = MemoryHelper.ReadMemory((ulong)(address + base_address), MemoryHelper.Length);
                         offset_label_list[i].Text = MemoryHelper.BytesToString(data);
                     }
                 }
-            }
-            catch
-            {
-
+            } catch {
             }
         }
 
-        private void cancel_btn_Click(object sender, EventArgs e)
-        {
+        private void cancel_btn_Click(object sender, EventArgs e) {
             this.Close();
         }
 
         private Point offset;
 
-        private void NewAddress_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (MouseButtons.Left != e.Button) return;
+        private void NewAddress_MouseDown(object sender, MouseEventArgs e) {
+            if (MouseButtons.Left != e.Button)
+                return;
 
             Point cur = this.PointToScreen(e.Location);
             offset = new Point(cur.X - this.Left, cur.Y - this.Top);
         }
 
-        private void NewAddress_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (MouseButtons.Left != e.Button) return;
+        private void NewAddress_MouseMove(object sender, MouseEventArgs e) {
+            if (MouseButtons.Left != e.Button)
+                return;
 
             Point cur = MousePosition;
             this.Location = new Point(cur.X - offset.X, cur.Y - offset.Y);
         }
     }
 }
-
